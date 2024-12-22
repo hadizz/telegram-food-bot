@@ -5,9 +5,20 @@ import os
 from database.db_operations import DatabaseManager
 from handlers.auth_handler import require_auth
 import logging
+from persiantools.jdatetime import JalaliDateTime
+import datetime
 
 # Initialize database manager
 db = DatabaseManager()
+
+def format_datetime(date_str):
+    """Convert datetime string to Jalali format"""
+    try:
+        dt = datetime.datetime.strptime(date_str, "%Y-%m-%d %H:%M:%S")
+        jdt = JalaliDateTime.to_jalali(dt)
+        return jdt.strftime("%Y/%m/%d ساعت %H:%M")
+    except:
+        return date_str
 
 # States for recipe conversation
 (TITLE, INGREDIENTS, COOKING_TIME, SKILL_LEVEL, CALORIES, 
@@ -135,12 +146,13 @@ async def show_my_recipes(update: Update, context: ContextTypes.DEFAULT_TYPE):
     for recipe in recipes:
         recipe_id, title, cooking_time, skill_level, calories, created_at = recipe
         
-        # Create preview message
+        # Create preview message with Jalali date
         message = (
             f"🍳 {title}\n"
             f"⏱ زمان پخت: {cooking_time} دقیقه\n"
             f"📊 سطح دشواری: {skill_level}\n"
-            f"🔥 کالری: {calories}"
+            f"🔥 کالری: {calories}\n"
+            f"📅 تاریخ ثبت: {format_datetime(created_at)}"
         )
         
         # Add view button
@@ -158,15 +170,15 @@ async def view_recipe_details(update: Update, context: ContextTypes.DEFAULT_TYPE
         recipe = db.get_recipe_details(recipe_id)
         
         if recipe:
-            # Create message
+            # Create message with Jalali date
             message = (
                 f"🍳 {recipe['title']}\n\n"
                 f"📝 مواد لازم:\n{recipe['ingredients']}\n\n"
                 f"👨‍🍳 دستور پخت:\n{recipe['instructions']}\n\n"
                 f"⏱ زمان پخت: {recipe['cooking_time']} دقیقه\n"
-                f"📊 سطح دشواری: {recipe['skill_level']}\n"
+                f"��� سطح دشواری: {recipe['skill_level']}\n"
                 f"🔥 کالری: {recipe['calories']}\n"
-                f"📅 تاریخ ثبت: {recipe['created_at']}"
+                f"📅 تاریخ ثبت: {format_datetime(recipe['created_at'])}"
             )
             
             # Only show edit button if user is the owner
@@ -682,7 +694,7 @@ async def edit_photo(update: Update, context: ContextTypes.DEFAULT_TYPE):
             await update.message.reply_text("خطا در ویرایش. لطفاً دوباره تلاش کنید.")
     except Exception as e:
         print(f"Error updating photo: {e}")
-        await update.message.reply_text("خطا در ویرایش. لطفاً دوباره تلاش کنید.")
+        await update.message.reply_text("خطا در ویرایش. لطفاً دوباره تلاش ��نید.")
     
     return ConversationHandler.END
 
