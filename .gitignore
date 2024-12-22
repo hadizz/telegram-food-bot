@@ -1,32 +1,25 @@
-*.db
-photos/
-
-# Byte-compiled / optimized / DLL files
+# Python
 __pycache__/
 *.py[cod]
-
-# Distribution / packaging
-*.egg-info/
-dist/
-build/
-
-# Virtual environments
-.env
-.venv
+*$py.class
 venv/
-
-# Unit test / coverage reports
-.coverage
-.pytest_cache/
-
-# Jupyter Notebook
-.ipynb_checkpoints
-
-# Environments
-.env
-.env.*
-.venv
-.venv.*
 env/
-env.*
+
+# Database
+*.db
+*.sqlite3
+
+# Media files
+photos/
+voices/
+
+# IDE
+.vscode/
+.idea/
+
+# Environment variables
+.env
+
+# Logs
+*.log
 
